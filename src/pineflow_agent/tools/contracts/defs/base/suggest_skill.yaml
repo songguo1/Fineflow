@@ -1,0 +1,21 @@
+name: suggest_skill
+description: "Suggest relevant GIS skill documents for a request without loading their full content."
+category: runtime
+terminal: true
+
+display:
+  title: "Suggest GIS skill"
+  command: "suggest_skill {query}"
+
+required_slots: []
+properties:
+  query:
+    type: string
+    description: "Natural-language GIS request or topic to match against available skills."
+  limit:
+    type: integer
+    default: 3
+    description: "Maximum number of skill suggestions to return."
+
+groups: [group:runtime]
+tags: [skill, suggestion, guidance]

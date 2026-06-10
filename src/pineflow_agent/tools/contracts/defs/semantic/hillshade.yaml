@@ -1,0 +1,33 @@
+name: hillshade
+description: "Create a hillshade relief map from a raster DEM."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: gdal:hillshade
+required_slots: [input_ref]
+defaults:
+  band: 1
+  z_factor: 1.0
+  scale: 1.0
+  azimuth: 315.0
+  altitude: 45.0
+  compute_edges: false
+  output: TEMPORARY_OUTPUT
+
+display:
+  title: "Create hillshade"
+  command: "hillshade {input_ref}"
+
+tags: [山体阴影, hillshade, 地形, terrain, dem, 光照]
+groups: [group:raster]
+
+layer_requirements:
+  input_ref: raster
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_slots]
+  preflight: [raster_inputs]
+  runtime_repair: []

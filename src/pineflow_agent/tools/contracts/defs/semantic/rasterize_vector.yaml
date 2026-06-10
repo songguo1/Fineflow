@@ -1,0 +1,29 @@
+name: rasterize_vector
+description: "Rasterize a vector layer."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: gdal:rasterize
+required_slots: [input_ref, extent, width, height]
+defaults:
+  burn_value: 1
+  output: TEMPORARY_OUTPUT
+
+display:
+  title: "Rasterize vector"
+  command: "rasterize {input_ref}"
+
+tags: [栅格化, rasterize]
+groups: [group:raster]
+
+layer_requirements:
+  input_ref: vector
+
+geometry_requirements: {}
+field_requirements:
+  input_ref: [field]
+
+rules:
+  semantic: [required_slots]
+  preflight: [raster_inputs]
+  runtime_repair: []

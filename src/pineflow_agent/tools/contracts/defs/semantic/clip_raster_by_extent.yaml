@@ -1,0 +1,27 @@
+name: clip_raster_by_extent
+description: "Clip a raster layer by an extent."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: gdal:cliprasterbyextent
+required_slots: [input_ref, extent]
+defaults:
+  output: TEMPORARY_OUTPUT
+
+display:
+  title: "Clip raster by extent"
+  command: "clip_raster {input_ref} by extent"
+
+tags: [裁切, 裁剪, clip]
+groups: [group:raster]
+
+layer_requirements:
+  input_ref: raster
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_slots]
+  preflight: [raster_inputs]
+  runtime_repair: []

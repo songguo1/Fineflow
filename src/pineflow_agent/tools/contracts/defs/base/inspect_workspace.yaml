@@ -1,0 +1,22 @@
+name: inspect_workspace
+description: "Inspect the current GIS workspace, active ToolKits, and available ToolKit catalog without running a GIS operation."
+category: runtime
+terminal: true
+
+display:
+  title: "Inspect workspace"
+  command: "inspect_workspace {query}"
+
+required_slots: []
+properties:
+  query:
+    type: string
+    description: "Optional question about current layers, outputs, or available ToolKits."
+  query_type:
+    type: string
+    enum: [overview, layers, fields, outputs, risks, memory, active_run, toolkits]
+    default: overview
+    description: "Structured workspace view to return."
+
+groups: [group:runtime]
+tags: [workspace, inspect, 状态, 图层]

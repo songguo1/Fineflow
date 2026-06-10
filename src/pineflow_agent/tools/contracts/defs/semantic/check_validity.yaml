@@ -1,0 +1,51 @@
+name: check_validity
+description: "Check vector geometry validity and output valid features."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:checkvalidity
+required_slots: [input_ref]
+defaults:
+  method: 2
+  valid_output: TEMPORARY_OUTPUT
+  invalid_output: TEMPORARY_OUTPUT
+  error_output: TEMPORARY_OUTPUT
+
+processing_parameters:
+  INPUT_LAYER: input_ref
+  METHOD:
+    slot: method
+    default_slot: method
+    type: int
+  VALID_OUTPUT:
+    slot: valid_output
+    default_slot: valid_output
+  INVALID_OUTPUT:
+    slot: invalid_output
+    default_slot: invalid_output
+  ERROR_OUTPUT:
+    slot: error_output
+    default_slot: error_output
+
+display:
+  title: "Check geometry validity"
+  command: "check_validity {input_ref}"
+
+tags: [检查几何, validity, invalid geometry, vector cleaning]
+groups: [group:vector_transform]
+
+properties:
+  method:
+    type: integer
+    description: "Geometry validity method id."
+
+layer_requirements:
+  input_ref: vector
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_slots]
+  preflight: []
+  runtime_repair: []

@@ -1,0 +1,22 @@
+name: summarize_layer
+description: "Create a human-readable and structured summary of a loaded layer or table without modifying GIS state."
+category: data
+terminal: false
+
+display:
+  title: "Summarize layer"
+  command: "summarize_layer {layer_ref}"
+
+required_slots: [layer_ref]
+properties:
+  layer_ref:
+    type: string
+    description: "Loaded layer id or name to summarize."
+  detail_level:
+    type: string
+    enum: [summary, fields, full]
+    default: summary
+    description: "Summary depth. Use fields for field details, full for all known metadata."
+
+groups: [group:data]
+tags: [inspect, summary, fields, metadata]

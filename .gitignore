@@ -1,0 +1,64 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.pytest_tmp/
+.venv/
+venv/
+tests/
+
+# Local runtime state
+.pineflow/
+var/
+output/
+runtime/session_logs/
+runtime/pytest_tmp/
+runtime/pytest_temp_run/
+runtime/pineflow_test_tmp_*/
+codex_pytest_tmp/
+manual_tmp_probe/
+
+# Desktop / frontend build outputs
+apps/desktop/node_modules/
+apps/desktop/dist/
+apps/desktop/src-tauri/target/
+apps/desktop/.vite-dev.*.log
+
+# Local editor / assistant metadata
+.vscode/
+.claude/
+AGENTS.md
+CLAUDE.md
+
+# Local-only project content
+data/
+docs/
+legacy/
+
+# Local env and logs
+.env
+.env.*
+!.env.example
+*.log
+
+# GIS outputs and accidental root artifacts
+.gpkg.*
+data/*.gpkg
+data/*.shp
+data/*.shx
+data/*.dbf
+data/*.prj
+data/*.cpg
+data/*.csv
+output/*.gpkg
+output/*.geojson
+output/*.shp
+*.gpkg
+*.shp
+*.shx
+*.dbf
+*.prj
+*.cpg
+*.tif
+*.aux.xml
+*.ovr

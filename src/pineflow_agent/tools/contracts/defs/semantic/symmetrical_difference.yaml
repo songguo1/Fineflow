@@ -1,0 +1,49 @@
+name: symmetrical_difference
+description: "Create features from areas not shared by two vector layers."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:symmetricaldifference
+required_slots: [input_ref, overlay_ref]
+defaults:
+  output: TEMPORARY_OUTPUT
+
+processing_parameters:
+  INPUT: input_ref
+  OVERLAY: overlay_ref
+  INPUT_FIELDS:
+    slot: input_fields
+    default: []
+    type: list
+  OVERLAY_FIELDS:
+    slot: overlay_fields
+    default: []
+    type: list
+  OVERLAY_FIELDS_PREFIX:
+    slot: overlay_fields_prefix
+    default: ""
+    type: string
+  OUTPUT:
+    value: __output__
+
+output_policy:
+  suffix: symdiff
+
+display:
+  title: "Symmetrical difference"
+  command: "symmetrical_difference {input_ref} / {overlay_ref}"
+
+tags: [对称差, symmetrical]
+groups: [group:vector_overlay]
+
+layer_requirements:
+  input_ref: vector
+  overlay_ref: vector
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_layers]
+  preflight: [layer_exists, geometry_risk]
+  runtime_repair: [invalid_geometry]

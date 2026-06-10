@@ -1,0 +1,20 @@
+name: load_csv
+description: "Load a CSV file as a table layer without creating geometry."
+category: data
+terminal: false
+
+display:
+  title: "Load CSV table"
+  command: "load_csv {input_path}"
+
+required_slots: [input_path]
+properties:
+  input_path:
+    type: string
+    description: "Local CSV file path."
+  name:
+    type: string
+    description: "Optional table alias."
+
+groups: [group:data]
+tags: [csv, table, load]

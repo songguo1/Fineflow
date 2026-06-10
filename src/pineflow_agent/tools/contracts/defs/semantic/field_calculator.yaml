@@ -1,0 +1,56 @@
+name: field_calculator
+description: "Create or update a field using a QGIS expression formula."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:fieldcalculator
+required_slots: [input_ref, field_name, formula]
+defaults:
+  field_type: float
+  field_length: 10
+  field_precision: 3
+  output: TEMPORARY_OUTPUT
+
+missing_slot_messages:
+  field_name: semantic.field_calculator.missing_field_name
+  formula: semantic.field_calculator.missing_formula
+
+display:
+  title: "Calculate field"
+  command: "field_calculator {field_name} = {formula}"
+
+tags: []
+groups: [group:vector_analysis]
+
+layer_requirements:
+  input_ref: vector
+
+geometry_requirements: {}
+field_requirements: {}
+
+processing_parameters:
+  INPUT: input_ref
+  FIELD_NAME: field_name
+  FIELD_TYPE:
+    slot: field_type
+    default_slot: field_type
+    type: field_type
+  FIELD_LENGTH:
+    slot: field_length
+    default_slot: field_length
+    type: int
+  FIELD_PRECISION:
+    slot: field_precision
+    default_slot: field_precision
+    type: int
+  FORMULA: formula
+  OUTPUT:
+    value: __output__
+
+output_policy:
+  suffix: calculated
+
+rules:
+  semantic: [required_slots]
+  preflight: []
+  runtime_repair: []

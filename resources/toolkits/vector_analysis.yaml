@@ -1,0 +1,16 @@
+name: vector_analysis
+title: "Vector analysis"
+description: "Buffer, dissolve, merge, join, count, and calculate vector attributes."
+tools:
+  - buffer_layer
+  - dissolve_layer
+  - merge_layers
+  - extract_by_attribute
+  - keep_fields
+  - select_by_expression
+  - join_by_location
+  - join_by_nearest
+  - count_points_in_polygon
+  - field_calculator
+tags: [buffer, join, attribute, count]
+profile: vector_raster_basic

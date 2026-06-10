@@ -1,0 +1,28 @@
+name: reproject_raster
+description: "Reproject a raster layer to a target CRS."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: gdal:warpreproject
+required_slots: [input_ref, target_crs]
+defaults:
+  resampling: 0
+  output: TEMPORARY_OUTPUT
+
+display:
+  title: "Reproject raster"
+  command: "reproject_raster {input_ref} to {target_crs}"
+
+tags: [重投影, 坐标系, crs, reproject]
+groups: [group:raster]
+
+layer_requirements:
+  input_ref: raster
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_slots]
+  preflight: [raster_inputs]
+  runtime_repair: []

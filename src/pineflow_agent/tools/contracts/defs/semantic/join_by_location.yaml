@@ -1,0 +1,43 @@
+name: join_by_location
+description: "Join attributes from one layer to another by spatial relationship."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:joinattributesbylocation
+required_slots: [input_ref, join_ref, predicate]
+defaults:
+  method: 1
+  discard_nonmatching: false
+  join_fields: []
+  prefix: ""
+  output: TEMPORARY_OUTPUT
+
+missing_slot_messages:
+  join_ref: semantic.join.missing_join_ref
+  predicate: semantic.spatial.missing_predicate
+
+display:
+  title: "Join by location"
+  command: "join {input_ref} with {join_ref} by location"
+
+tags: [空间连接, spatial join, join by location, 范围内, within]
+groups: [group:vector_analysis]
+
+layer_requirements:
+  input_ref: vector
+  join_ref: vector
+
+slot_roles:
+  primary_input: input_ref
+  overlay_inputs: [join_ref]
+  invalid_geometry_default: join_ref
+  repair_targets: [input_ref, join_ref]
+
+geometry_requirements: {}
+field_requirements:
+  join_ref: [join_fields]
+
+rules:
+  semantic: [required_layers]
+  preflight: [layer_exists, geometry_risk]
+  runtime_repair: [invalid_geometry]

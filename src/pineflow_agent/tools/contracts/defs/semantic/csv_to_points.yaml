@@ -1,0 +1,28 @@
+name: csv_to_points
+description: "Create a point vector layer from a loaded CSV table with x/y coordinate fields."
+category: data
+terminal: false
+
+algorithm_id: csv_to_points
+required_slots: [input_ref, x_field, y_field]
+defaults:
+  crs: EPSG:4326
+  output: TEMPORARY_OUTPUT
+
+display:
+  title: "Create points from CSV"
+  command: "csv_to_points {input_ref} ({x_field}, {y_field})"
+
+tags: [经纬度, csv, 表格, 点图层, longitude, latitude]
+groups: [group:data]
+
+layer_requirements:
+  input_ref: table
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_fields, numeric_coordinates]
+  preflight: [csv_field_presence, csv_encoding, coordinate_crs]
+  runtime_repair: [encoding_retry]

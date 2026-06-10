@@ -1,0 +1,32 @@
+name: delete_duplicate_geometries
+description: "Remove duplicate geometries from a vector layer."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:deleteduplicategeometries
+required_slots: [input_ref]
+defaults:
+  output: TEMPORARY_OUTPUT
+
+processing_parameters:
+  INPUT: input_ref
+  OUTPUT:
+    value: __output__
+
+display:
+  title: "Delete duplicate geometries"
+  command: "delete_duplicate_geometries {input_ref}"
+
+tags: [去重, duplicate geometry, clean geometry, vector cleaning]
+groups: [group:vector_transform]
+
+layer_requirements:
+  input_ref: vector
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_slots]
+  preflight: []
+  runtime_repair: []

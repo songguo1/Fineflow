@@ -1,0 +1,40 @@
+name: merge_layers
+description: "Merge two or more vector layers."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:mergevectorlayers
+required_slots: [input_refs]
+defaults:
+  output: TEMPORARY_OUTPUT
+
+processing_parameters:
+  LAYERS:
+    slot: input_refs
+    type: list
+  CRS:
+    slot: target_crs
+    none_if_empty: true
+  OUTPUT:
+    value: __output__
+
+output_policy:
+  fixed_name: merged_layers
+
+display:
+  title: "Merge layers"
+  command: "merge {input_refs}"
+
+tags: []
+groups: [group:vector_analysis]
+
+layer_requirements:
+  input_refs: vector
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_layers]
+  preflight: [layer_exists, geometry_risk]
+  runtime_repair: [invalid_geometry]

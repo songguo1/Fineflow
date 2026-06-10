@@ -1,0 +1,46 @@
+name: convex_hull
+description: "Create convex hull polygons from vector features."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:convexhull
+required_slots: [input_ref]
+defaults:
+  field: ""
+  type: 0
+  output: TEMPORARY_OUTPUT
+
+processing_parameters:
+  INPUT: input_ref
+  FIELD:
+    slot: field
+    default_slot: field
+    type: string
+  TYPE:
+    slot: type
+    default_slot: type
+    type: int
+  OUTPUT:
+    value: __output__
+
+output_policy:
+  suffix: hull
+
+display:
+  title: "Create convex hull"
+  command: "convex_hull {input_ref}"
+
+tags: [凸包, convex hull]
+groups: [group:vector_transform]
+
+layer_requirements:
+  input_ref: vector
+
+geometry_requirements: {}
+field_requirements:
+  input_ref: [field]
+
+rules:
+  semantic: [required_slots]
+  preflight: []
+  runtime_repair: []

@@ -1,0 +1,38 @@
+name: extract_by_location
+description: "Extract features by spatial relationship to another vector layer."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:extractbylocation
+required_slots: [input_ref, predicate, intersect_ref]
+defaults:
+  output: TEMPORARY_OUTPUT
+
+missing_slot_messages:
+  intersect_ref: semantic.location.missing_intersect_ref
+  predicate: semantic.spatial.missing_predicate
+
+display:
+  title: "Extract by location"
+  command: "extract from {input_ref} where {predicate} {intersect_ref}"
+
+tags: [范围内, within, inside, 空间筛选, 落在, 位于, 附近, near, nearby]
+groups: [group:vector_analysis]
+
+layer_requirements:
+  input_ref: vector
+  intersect_ref: vector
+
+slot_roles:
+  primary_input: input_ref
+  overlay_inputs: [intersect_ref]
+  invalid_geometry_default: intersect_ref
+  repair_targets: [input_ref, intersect_ref]
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_slots]
+  preflight: [layer_exists, geometry_risk]
+  runtime_repair: []

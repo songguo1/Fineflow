@@ -1,0 +1,23 @@
+name: export_result
+description: "Export a loaded result layer to a requested output path."
+category: output
+terminal: false
+
+display:
+  title: "Export result layer"
+  command: "export_result {layer_ref}"
+
+required_slots: [layer_ref, output_path]
+properties:
+  layer_ref:
+    type: string
+    description: "Layer id or alias to export."
+  output_path:
+    type: string
+    description: "Local output path."
+missing_slot_messages:
+  output_path: semantic.export.missing_output_path
+
+groups: [group:output]
+tags: [导出, export, shp, geojson, gpkg, tif, tiff]
+preflight_rules: [output_path]

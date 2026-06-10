@@ -1,0 +1,22 @@
+name: select_toolkit
+description: "Load one or more ToolKits when the current visible tools do not contain the needed GIS capability. This changes tool visibility only; it does not execute a GIS operation."
+category: runtime
+terminal: true
+
+display:
+  title: "Load ToolKit"
+  command: "select_toolkit {toolkits}"
+
+required_slots: [toolkits, reason]
+properties:
+  toolkits:
+    type: array
+    description: "ToolKit names to load, such as data_io, vector_transform, vector_analysis, vector_overlay, raster, or qgis_generic."
+    items:
+      type: string
+  reason:
+    type: string
+    description: "Why these ToolKits are needed for the user request."
+
+groups: [group:runtime]
+tags: [toolkit, tools, 工具包, 能力]

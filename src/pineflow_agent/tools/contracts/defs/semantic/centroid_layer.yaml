@@ -1,0 +1,40 @@
+name: centroid_layer
+description: "Create centroid points from vector features."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:centroids
+required_slots: [input_ref]
+defaults:
+  all_parts: false
+  output: TEMPORARY_OUTPUT
+
+processing_parameters:
+  INPUT: input_ref
+  ALL_PARTS:
+    slot: all_parts
+    default_slot: all_parts
+    type: bool
+  OUTPUT:
+    value: __output__
+
+output_policy:
+  suffix: centroids
+
+display:
+  title: "Create centroids"
+  command: "centroid {input_ref}"
+
+tags: [质心, centroid]
+groups: [group:vector_transform]
+
+layer_requirements:
+  input_ref: vector
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_slots]
+  preflight: []
+  runtime_repair: []

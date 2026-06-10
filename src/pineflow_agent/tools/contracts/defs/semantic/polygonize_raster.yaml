@@ -1,0 +1,45 @@
+name: polygonize_raster
+description: "Convert raster regions to polygon features."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: gdal:polygonize
+required_slots: [input_ref]
+defaults:
+  band: 1
+  field_name: DN
+  output: TEMPORARY_OUTPUT
+
+processing_parameters:
+  INPUT: input_ref
+  BAND:
+    slot: band
+    default_slot: band
+    type: int
+  FIELD:
+    slot: field_name
+    default_slot: field_name
+    type: string
+  OUTPUT:
+    value: __output__
+
+output_policy:
+  suffix: polygonized
+
+display:
+  title: "Polygonize raster"
+  command: "polygonize {input_ref}"
+
+tags: [矢量化, polygonize]
+groups: [group:raster]
+
+layer_requirements:
+  input_ref: raster
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_slots]
+  preflight: [raster_inputs]
+  runtime_repair: []

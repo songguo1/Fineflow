@@ -1,0 +1,27 @@
+name: batch_reproject_layers
+description: "Reproject multiple vector layers to a shared target CRS in one call."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:reprojectlayer
+required_slots: [input_refs, target_crs]
+defaults:
+  output: TEMPORARY_OUTPUT
+
+display:
+  title: "Batch reproject layers"
+  command: "batch reproject {input_refs} to {target_crs}"
+
+tags: [批量, 重投影, 坐标系, crs, reproject, batch]
+groups: [group:vector_transform]
+
+layer_requirements:
+  input_refs: vector
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_slots]
+  preflight: []
+  runtime_repair: []

@@ -1,0 +1,37 @@
+name: join_by_nearest
+description: "Join attributes from nearest features in another vector layer."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:joinbynearest
+required_slots: [input_ref, join_ref]
+defaults:
+  join_fields: []
+  discard_nonmatching: false
+  prefix: ""
+  neighbors: 1
+  max_distance: null
+  output: TEMPORARY_OUTPUT
+
+missing_slot_messages:
+  join_ref: semantic.join.missing_join_ref
+
+display:
+  title: "Join by nearest"
+  command: "join {input_ref} nearest {join_ref}"
+
+tags: [最近, nearest]
+groups: [group:vector_analysis]
+
+layer_requirements:
+  input_ref: vector
+  join_ref: vector
+
+geometry_requirements: {}
+field_requirements:
+  join_ref: [join_fields]
+
+rules:
+  semantic: [required_layers]
+  preflight: [layer_exists, geometry_risk]
+  runtime_repair: [invalid_geometry]

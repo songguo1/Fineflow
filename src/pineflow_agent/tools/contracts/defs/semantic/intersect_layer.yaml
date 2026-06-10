@@ -1,0 +1,34 @@
+name: intersect_layer
+description: "Create intersection features between two vector layers."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:intersection
+required_slots: [input_ref, overlay_ref]
+defaults:
+  output: TEMPORARY_OUTPUT
+
+display:
+  title: "Intersect layers"
+  command: "intersect {input_ref} with {overlay_ref}"
+
+tags: [相交, intersection, intersect]
+groups: [group:vector_overlay]
+
+layer_requirements:
+  input_ref: vector
+  overlay_ref: vector
+
+slot_roles:
+  primary_input: input_ref
+  overlay_inputs: [overlay_ref]
+  invalid_geometry_default: overlay_ref
+  repair_targets: [input_ref, overlay_ref]
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_layers]
+  preflight: [layer_exists, geometry_risk]
+  runtime_repair: [invalid_geometry]

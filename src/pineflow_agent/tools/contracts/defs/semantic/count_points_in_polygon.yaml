@@ -1,0 +1,45 @@
+name: count_points_in_polygon
+description: "Count point features inside polygon features."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:countpointsinpolygon
+required_slots: [polygon_ref, point_ref]
+defaults:
+  field_name: NUMPOINTS
+  output: TEMPORARY_OUTPUT
+
+processing_parameters:
+  POLYGONS: polygon_ref
+  POINTS: point_ref
+  FIELD:
+    slot: field_name
+    default_slot: field_name
+    type: string
+  OUTPUT:
+    value: __output__
+
+output_policy:
+  suffix: point_count
+
+display:
+  title: "Count points in polygon"
+  command: "count {point_ref} in {polygon_ref}"
+
+tags: []
+groups: [group:vector_analysis]
+
+layer_requirements:
+  polygon_ref: vector
+  point_ref: vector
+
+geometry_requirements:
+  polygon_ref: polygon
+  point_ref: point
+
+field_requirements: {}
+
+rules:
+  semantic: [required_layers]
+  preflight: [layer_exists, geometry_risk]
+  runtime_repair: [invalid_geometry]

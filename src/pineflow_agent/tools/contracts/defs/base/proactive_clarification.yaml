@@ -1,0 +1,40 @@
+name: proactive_clarification
+description: "Pause execution to ask the user a structured clarification question before continuing."
+category: runtime
+terminal: true
+
+display:
+  title: "Ask user clarification"
+  command: "proactive_clarification {question}"
+
+required_slots:
+  - question
+properties:
+  question:
+    type: string
+    description: "Human-readable question to show the user."
+  active_intent:
+    type: string
+    description: "Canonical GIS action id this clarification will unblock, for example export_result."
+  filled_slots:
+    type: object
+    description: "Slots already known for the blocked action."
+  missing_slots:
+    type: array
+    items:
+      type: string
+    description: "Slots that the user answer may fill."
+  choices:
+    type: array
+    description: "Structured choices. Each item must include slot, value, and label."
+    items:
+      type: object
+  slot_patch_schema:
+    type: object
+    description: "Schema for user-editable slots."
+  risk:
+    type: object
+    description: "Optional structured risk or ambiguity that triggered the clarification."
+
+groups: [group:runtime]
+tags: [clarification, human_in_the_loop, pending_task, 澄清, 确认]

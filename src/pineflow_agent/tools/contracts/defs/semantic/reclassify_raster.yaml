@@ -1,0 +1,30 @@
+name: reclassify_raster
+description: "Reclassify raster values using a lookup table from a vector layer."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:reclassifybylayer
+required_slots: [input_ref, table_ref]
+defaults:
+  raster_band: 1
+  output: TEMPORARY_OUTPUT
+
+display:
+  title: "Reclassify raster"
+  command: "reclassify {input_ref} by {table_ref}"
+
+tags: [重分类, reclassify, reclass, 栅格]
+groups: [group:raster]
+
+layer_requirements:
+  input_ref: raster
+  table_ref: vector
+
+geometry_requirements: {}
+field_requirements:
+  table_ref: [min_field, max_field, value_field]
+
+rules:
+  semantic: [required_slots]
+  preflight: [raster_inputs]
+  runtime_repair: []

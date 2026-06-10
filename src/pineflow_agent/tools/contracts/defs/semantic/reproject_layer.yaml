@@ -1,0 +1,39 @@
+name: reproject_layer
+description: "Reproject a vector layer to a target CRS such as EPSG:3857."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:reprojectlayer
+required_slots: [input_ref, target_crs]
+defaults:
+  output: TEMPORARY_OUTPUT
+
+processing_parameters:
+  INPUT: input_ref
+  TARGET_CRS: target_crs
+  OUTPUT:
+    value: __output__
+
+output_policy:
+  suffix: reprojected
+
+missing_slot_messages:
+  target_crs: semantic.reproject.missing_target_crs
+
+display:
+  title: "Reproject layer"
+  command: "reproject {input_ref} to {target_crs}"
+
+tags: [重投影, 坐标系, crs, reproject]
+groups: [group:vector_transform]
+
+layer_requirements:
+  input_ref: vector
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_slots]
+  preflight: []
+  runtime_repair: []

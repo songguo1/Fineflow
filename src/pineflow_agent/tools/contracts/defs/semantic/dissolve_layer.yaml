@@ -1,0 +1,32 @@
+name: dissolve_layer
+description: "Dissolve features, optionally grouped by one field."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:dissolve
+required_slots: [input_ref]
+defaults:
+  separate_disjoint: false
+  output: TEMPORARY_OUTPUT
+
+display:
+  title: "Dissolve layer"
+  command: "dissolve {input_ref}"
+
+tags: []
+groups: [group:vector_analysis]
+
+layer_requirements:
+  input_ref: vector
+
+slot_roles:
+  primary_input: input_ref
+  repair_targets: [input_ref]
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_slots]
+  preflight: []
+  runtime_repair: []

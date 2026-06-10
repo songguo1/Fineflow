@@ -1,0 +1,42 @@
+name: rename_field
+description: "Rename one attribute field in a vector layer."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:renametablefield
+required_slots: [input_ref, field, field_name]
+defaults:
+  output: TEMPORARY_OUTPUT
+
+missing_slot_messages:
+  field: semantic.field.missing_field
+  field_name: semantic.rename_field.missing_field_name
+
+display:
+  title: "Rename field"
+  command: "rename field {field} to {field_name}"
+
+tags: [字段, attribute, rename]
+groups: [group:attribute, group:vector_analysis]
+
+layer_requirements:
+  input_ref: vector
+
+geometry_requirements: {}
+field_requirements:
+  input_ref: [field]
+
+processing_parameters:
+  INPUT: input_ref
+  FIELD: field
+  NEW_NAME: field_name
+  OUTPUT:
+    value: __output__
+
+output_policy:
+  suffix: renamed_field
+
+rules:
+  semantic: [required_slots]
+  preflight: []
+  runtime_repair: []

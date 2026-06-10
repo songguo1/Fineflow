@@ -1,0 +1,42 @@
+name: keep_fields
+description: "Keep only selected attribute fields in a vector layer."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:retainfields
+required_slots: [input_ref, fields]
+defaults:
+  output: TEMPORARY_OUTPUT
+
+missing_slot_messages:
+  fields: semantic.keep_fields.missing_fields
+
+display:
+  title: "Keep fields"
+  command: "keep fields {fields} from {input_ref}"
+
+tags: [字段, attribute, retain]
+groups: [group:vector_analysis]
+
+layer_requirements:
+  input_ref: vector
+
+geometry_requirements: {}
+field_requirements:
+  input_ref: [fields]
+
+processing_parameters:
+  INPUT: input_ref
+  FIELDS:
+    slot: fields
+    type: list
+  OUTPUT:
+    value: __output__
+
+output_policy:
+  suffix: retained_fields
+
+rules:
+  semantic: [required_slots]
+  preflight: []
+  runtime_repair: []

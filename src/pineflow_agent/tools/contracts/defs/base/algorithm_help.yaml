@@ -1,0 +1,16 @@
+name: algorithm_help
+description: "Load help and parameter metadata for a QGIS processing algorithm."
+category: qgis_generic
+terminal: false
+
+display:
+  title: "Inspect algorithm {algorithm_title}"
+  command: "algorithm_help {algorithm_command}"
+
+required_slots: [algorithm_id]
+properties:
+  algorithm_id:
+    type: string
+    description: "QGIS algorithm id such as native:buffer."
+
+groups: [group:qgis_generic]

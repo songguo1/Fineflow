@@ -1,0 +1,58 @@
+name: snap_geometries
+description: "Snap input vector geometries to a reference vector layer."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:snapgeometries
+required_slots: [input_ref, reference_ref, tolerance]
+defaults:
+  behavior: 0
+  output: TEMPORARY_OUTPUT
+
+processing_parameters:
+  INPUT: input_ref
+  REFERENCE_LAYER: reference_ref
+  TOLERANCE:
+    slot: tolerance
+    type: float
+  BEHAVIOR:
+    slot: behavior
+    default_slot: behavior
+    type: int
+  OUTPUT:
+    value: __output__
+
+output_policy:
+  suffix: snapped
+
+missing_slot_messages:
+  tolerance: semantic.missing_slots
+
+display:
+  title: "Snap geometries"
+  command: "snap_geometries {input_ref} to {reference_ref}"
+
+tags: [捕捉, snap, topology, vector cleaning]
+groups: [group:vector_transform]
+
+properties:
+  reference_ref:
+    type: string
+    display_label: "参考图层"
+    description: "Reference vector layer name or layer_id used for snapping."
+  behavior:
+    type: integer
+    display_label: "捕捉方式"
+    description: "QGIS snap behavior id."
+
+layer_requirements:
+  input_ref: vector
+  reference_ref: vector
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_slots]
+  preflight: [layer_exists]
+  runtime_repair: []

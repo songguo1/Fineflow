@@ -1,0 +1,31 @@
+name: clip_raster_by_mask
+description: "Clip a raster layer by a polygon mask layer."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: gdal:cliprasterbymasklayer
+required_slots: [input_ref, mask_ref]
+defaults:
+  crop_to_cutline: true
+  output: TEMPORARY_OUTPUT
+
+display:
+  title: "Clip raster by mask"
+  command: "clip_raster {input_ref} by mask {mask_ref}"
+
+tags: [裁切, 裁剪, clip, 掩膜, mask]
+groups: [group:raster]
+
+layer_requirements:
+  input_ref: raster
+  mask_ref: vector
+
+geometry_requirements:
+  mask_ref: polygon
+
+field_requirements: {}
+
+rules:
+  semantic: [required_slots]
+  preflight: [raster_inputs]
+  runtime_repair: []

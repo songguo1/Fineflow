@@ -1,0 +1,22 @@
+name: raster
+title: "Raster analysis"
+description: "Reproject, clip, calculate, sample, rasterize, polygonize, and run zonal statistics."
+tools:
+  - reproject_raster
+  - clip_raster_by_mask
+  - clip_raster_by_extent
+  - raster_calculator
+  - zonal_statistics
+  - raster_sampling
+  - rasterize_vector
+  - polygonize_raster
+  - slope
+  - aspect
+  - hillshade
+  - contour
+  - reclassify_raster
+  - terrain_ruggedness_index
+  - topographic_position_index
+  - roughness
+tags: [raster, tif, zonal, sample, dem, terrain, slope, aspect, hillshade, contour, reclassify, tri, tpi, roughness]
+profile: vector_raster_basic

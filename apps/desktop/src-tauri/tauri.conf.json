@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "PineFlow",
+  "version": "0.1.0",
+  "identifier": "com.pineflow.desktop",
+  "build": {
+    "beforeDevCommand": "npm run dev:web",
+    "beforeBuildCommand": "npm run build:web",
+    "devUrl": "http://localhost:5174",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "PineFlow",
+        "width": 1480,
+        "height": 940,
+        "maximized": true,
+        "minWidth": 1180,
+        "minHeight": 760
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  }
+}

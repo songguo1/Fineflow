@@ -1,0 +1,43 @@
+name: simplify_geometry
+description: "Simplify vector geometries using a tolerance."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:simplifygeometries
+required_slots: [input_ref, tolerance]
+defaults:
+  method: 0
+  output: TEMPORARY_OUTPUT
+
+processing_parameters:
+  INPUT: input_ref
+  METHOD:
+    slot: method
+    default_slot: method
+    type: int
+  TOLERANCE:
+    slot: tolerance
+    type: float
+  OUTPUT:
+    value: __output__
+
+output_policy:
+  suffix: simplified
+
+display:
+  title: "Simplify geometry"
+  command: "simplify {input_ref} tolerance {tolerance}"
+
+tags: [简化, simplify]
+groups: [group:vector_transform]
+
+layer_requirements:
+  input_ref: vector
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_slots]
+  preflight: []
+  runtime_repair: []

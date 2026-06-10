@@ -1,0 +1,9 @@
+name: qgis_generic
+title: "Generic QGIS Processing"
+description: "Search, inspect, and run uncommon QGIS Processing algorithms."
+tools:
+  - discover_algorithms
+  - algorithm_help
+  - run_algorithm
+tags: [processing, algorithm, debug]
+profile: vector_raster_basic

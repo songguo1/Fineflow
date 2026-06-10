@@ -1,0 +1,12 @@
+name: attribute_data
+title: "Attribute and data cleaning"
+description: "Inspect fields, filter attributes, calculate fields, and tidy attribute tables."
+tools:
+  - inspect_fields
+  - extract_by_attribute
+  - select_by_expression
+  - keep_fields
+  - rename_field
+  - field_calculator
+tags: [attribute, fields, filter, cleaning]
+profile: vector_raster_basic

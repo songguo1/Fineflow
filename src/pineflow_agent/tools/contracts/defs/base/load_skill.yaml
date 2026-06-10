@@ -1,0 +1,17 @@
+name: load_skill
+description: "Load a GIS best-practice skill document for reference. Available skills: csv_to_points (CSV table to point layer), meter_buffer (metric buffer with CRS awareness), boundary_filter (clip/filter by boundary). Loading a skill injects its guidance into the next turn."
+category: runtime
+terminal: true
+
+display:
+  title: "Load GIS skill"
+  command: "load_skill {name}"
+
+required_slots: [name]
+properties:
+  name:
+    type: string
+    description: "Skill name to load: csv_to_points, meter_buffer, or boundary_filter."
+
+groups: [group:runtime]
+# description is dynamically enriched with skill names at load time via skill_registry

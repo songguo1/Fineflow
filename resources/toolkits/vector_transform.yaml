@@ -1,0 +1,16 @@
+name: vector_transform
+title: "Vector transform and repair"
+description: "Reproject, repair, simplify, and derive vector geometries."
+tools:
+  - reproject_layer
+  - fix_geometries
+  - centroid_layer
+  - point_on_surface
+  - multipart_to_singlepart
+  - simplify_geometry
+  - delete_duplicate_geometries
+  - snap_geometries
+  - check_validity
+  - batch_reproject_layers
+tags: [crs, reproject, repair, geometry, topology, cleaning, batch]
+profile: vector_raster_basic

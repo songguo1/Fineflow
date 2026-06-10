@@ -1,0 +1,15 @@
+{
+  "name": "pineflow-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "desktop:dev": "npm --prefix apps/desktop run dev",
+    "desktop:dev:web": "npm --prefix apps/desktop run dev:web",
+    "desktop:build": "npm --prefix apps/desktop run build",
+    "desktop:build:web": "npm --prefix apps/desktop run build:web",
+    "desktop:preview": "npm --prefix apps/desktop run preview"
+  },
+  "workspaces": [
+    "apps/desktop"
+  ]
+}

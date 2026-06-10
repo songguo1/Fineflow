@@ -1,0 +1,35 @@
+name: multipart_to_singlepart
+description: "Split multipart vector features into singlepart features."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:multiparttosingleparts
+required_slots: [input_ref]
+defaults:
+  output: TEMPORARY_OUTPUT
+
+processing_parameters:
+  INPUT: input_ref
+  OUTPUT:
+    value: __output__
+
+output_policy:
+  suffix: singlepart
+
+display:
+  title: "Multipart to singlepart"
+  command: "multipart_to_singlepart {input_ref}"
+
+tags: [单部件, singlepart]
+groups: [group:vector_transform]
+
+layer_requirements:
+  input_ref: vector
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_slots]
+  preflight: []
+  runtime_repair: []

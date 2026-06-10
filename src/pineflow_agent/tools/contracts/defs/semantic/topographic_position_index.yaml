@@ -1,0 +1,42 @@
+name: topographic_position_index
+description: "Calculate topographic position index (TPI) from a raster DEM."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: gdal:tpitopographicpositionindex
+required_slots: [input_ref]
+defaults:
+  band: 1
+  compute_edges: false
+  output: TEMPORARY_OUTPUT
+
+processing_parameters:
+  INPUT: input_ref
+  BAND:
+    slot: band
+    default_slot: band
+    type: int
+  COMPUTE_EDGES:
+    slot: compute_edges
+    default_slot: compute_edges
+    type: bool
+  OUTPUT:
+    value: __output__
+
+display:
+  title: "Calculate topographic position"
+  command: "topographic_position_index {input_ref}"
+
+tags: [TPI, topographic position, 地形位置, terrain, dem]
+groups: [group:raster]
+
+layer_requirements:
+  input_ref: raster
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_slots]
+  preflight: [raster_inputs]
+  runtime_repair: []

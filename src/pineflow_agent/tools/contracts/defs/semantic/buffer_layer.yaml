@@ -1,0 +1,33 @@
+name: buffer_layer
+description: "Create a buffer around one vector layer."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:buffer
+required_slots: [input_ref, distance]
+defaults:
+  segments: 8
+  dissolve: false
+  output: TEMPORARY_OUTPUT
+
+display:
+  title: "Create buffer layer"
+  command: "buffer {input_ref} by {distance} {unit}"
+
+tags: [缓冲, buffer, 范围, 附近, near]
+groups: [group:vector_analysis]
+
+layer_requirements:
+  input_ref: vector
+
+slot_roles:
+  primary_input: input_ref
+  repair_targets: [input_ref]
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_layers]
+  preflight: [layer_exists, geometry_risk]
+  runtime_repair: [invalid_geometry]

@@ -1,0 +1,33 @@
+name: extract_by_attribute
+description: "Extract features whose attribute field matches a condition."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:extractbyattribute
+required_slots: [input_ref, field, operator]
+defaults:
+  output: TEMPORARY_OUTPUT
+
+missing_slot_messages:
+  field: semantic.field.missing_field
+  operator: semantic.attribute.missing_operator
+  value: semantic.attribute.missing_value
+
+display:
+  title: "Extract by attribute"
+  command: "extract where {field} {operator} {value}"
+
+tags: []
+groups: [group:vector_analysis]
+
+layer_requirements:
+  input_ref: vector
+
+geometry_requirements: {}
+field_requirements:
+  input_ref: [field]
+
+rules:
+  semantic: [required_slots]
+  preflight: []
+  runtime_repair: []

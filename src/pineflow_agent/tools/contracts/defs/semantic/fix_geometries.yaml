@@ -1,0 +1,35 @@
+name: fix_geometries
+description: "Repair invalid geometries in a vector layer."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:fixgeometries
+required_slots: [input_ref]
+defaults:
+  output: TEMPORARY_OUTPUT
+
+processing_parameters:
+  INPUT: input_ref
+  OUTPUT:
+    value: __output__
+
+output_policy:
+  suffix: fixed
+
+display:
+  title: "Fix geometries"
+  command: "fix_geometries {input_ref}"
+
+tags: [修复几何, invalid geometry, fix geometry, fixgeometries]
+groups: [group:vector_transform]
+
+layer_requirements:
+  input_ref: vector
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_slots]
+  preflight: []
+  runtime_repair: []

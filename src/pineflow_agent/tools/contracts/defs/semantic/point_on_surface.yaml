@@ -1,0 +1,35 @@
+name: point_on_surface
+description: "Create a point guaranteed to fall on each input feature surface."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:pointonsurface
+required_slots: [input_ref]
+defaults:
+  output: TEMPORARY_OUTPUT
+
+processing_parameters:
+  INPUT: input_ref
+  OUTPUT:
+    value: __output__
+
+output_policy:
+  suffix: surface_points
+
+display:
+  title: "Create points on surface"
+  command: "point_on_surface {input_ref}"
+
+tags: [面内点, point on surface]
+groups: [group:vector_transform]
+
+layer_requirements:
+  input_ref: vector
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_slots]
+  preflight: []
+  runtime_repair: []

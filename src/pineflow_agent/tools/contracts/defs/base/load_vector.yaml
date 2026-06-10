@@ -1,0 +1,20 @@
+name: load_vector
+description: "Load a vector layer from a local path."
+category: data
+terminal: false
+
+display:
+  title: "Load vector layer"
+  command: "load_vector {input_path}"
+
+required_slots: [input_path]
+properties:
+  input_path:
+    type: string
+    description: "Local vector dataset path."
+  name:
+    type: string
+    description: "Optional layer alias."
+
+groups: [group:data]
+tags: []

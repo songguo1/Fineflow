@@ -1,0 +1,31 @@
+name: raster_sampling
+description: "Sample raster values at point features."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:rastersampling
+required_slots: [input_ref, raster_ref]
+defaults:
+  column_prefix: "raster_"
+  output: TEMPORARY_OUTPUT
+
+display:
+  title: "Sample raster values"
+  command: "sample {raster_ref} at {input_ref}"
+
+tags: [栅格采样, sample raster, raster sampling]
+groups: [group:raster]
+
+layer_requirements:
+  input_ref: vector
+  raster_ref: raster
+
+geometry_requirements:
+  input_ref: point
+
+field_requirements: {}
+
+rules:
+  semantic: [required_slots]
+  preflight: [raster_inputs]
+  runtime_repair: []

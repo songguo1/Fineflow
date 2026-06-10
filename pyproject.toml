@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pineflow"
+version = "0.1.0"
+description = "GIS automation agent platform for QGIS workflows."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+  { name = "PineFlow contributors" }
+]
+dependencies = [
+  "fastapi>=0.110",
+  "pydantic>=2",
+  "PyYAML>=6",
+  "uvicorn>=0.29"
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8"
+]
+
+[project.scripts]
+pineflow-agent = "pineflow_agent.__main__:main"
+pineflow-api = "pineflow_api.entrypoints.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+pineflow_agent = [
+  "tools/contracts/defs/**/*.yaml"
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q"

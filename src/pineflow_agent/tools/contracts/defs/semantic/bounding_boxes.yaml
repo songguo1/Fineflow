@@ -1,0 +1,35 @@
+name: bounding_boxes
+description: "Create bounding boxes for vector features."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:boundingboxes
+required_slots: [input_ref]
+defaults:
+  output: TEMPORARY_OUTPUT
+
+processing_parameters:
+  INPUT: input_ref
+  OUTPUT:
+    value: __output__
+
+output_policy:
+  suffix: boxes
+
+display:
+  title: "Create bounding boxes"
+  command: "bounding_boxes {input_ref}"
+
+tags: [外包矩形, bounding box]
+groups: [group:vector_transform]
+
+layer_requirements:
+  input_ref: vector
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_slots]
+  preflight: []
+  runtime_repair: []

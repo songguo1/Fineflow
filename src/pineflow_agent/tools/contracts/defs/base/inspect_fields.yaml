@@ -1,0 +1,17 @@
+name: inspect_fields
+description: "Inspect fields for a loaded layer or table without modifying GIS state."
+category: data
+terminal: false
+
+display:
+  title: "Inspect fields"
+  command: "inspect_fields {layer_ref}"
+
+required_slots: [layer_ref]
+properties:
+  layer_ref:
+    type: string
+    description: "Loaded layer id or name to inspect."
+
+groups: [group:data, group:attribute]
+tags: [fields, attribute, inspect, metadata]

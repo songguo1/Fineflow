@@ -1,0 +1,48 @@
+name: contour
+description: "Extract contour lines from a raster DEM."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: gdal:contour
+required_slots: [input_ref, interval]
+defaults:
+  band: 1
+  field_name: ELEV
+  output: TEMPORARY_OUTPUT
+
+processing_parameters:
+  INPUT: input_ref
+  BAND:
+    slot: band
+    default_slot: band
+    type: int
+  INTERVAL:
+    slot: interval
+    type: float
+  FIELD_NAME:
+    slot: field_name
+    default_slot: field_name
+    type: string
+  OUTPUT:
+    value: __output__
+
+output_policy:
+  suffix: contour
+
+display:
+  title: "Generate contours"
+  command: "contour {input_ref} interval {interval}"
+
+tags: [等高线, contour, 地形, terrain, dem, 等值线]
+groups: [group:raster]
+
+layer_requirements:
+  input_ref: raster
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_slots]
+  preflight: [raster_inputs]
+  runtime_repair: []

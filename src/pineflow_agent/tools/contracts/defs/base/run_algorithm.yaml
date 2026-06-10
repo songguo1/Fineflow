@@ -1,0 +1,23 @@
+name: run_algorithm
+description: "Run a QGIS processing algorithm when no semantic tool fits."
+category: qgis_generic
+terminal: false
+
+display:
+  title: "Run {algorithm_title}"
+  command: "run_algorithm {algorithm_command}"
+
+required_slots: [algorithm_id, parameters]
+properties:
+  algorithm_id:
+    type: string
+    description: "QGIS processing algorithm id."
+  parameters:
+    type: object
+    description: "QGIS processing parameter dictionary."
+  output_name:
+    type: string
+    description: "Optional output layer alias."
+
+groups: [group:qgis_generic]
+preflight_rules: [output_path]

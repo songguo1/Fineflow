@@ -1,0 +1,12 @@
+name: vector_overlay
+title: "Vector overlay and spatial filtering"
+description: "Clip, intersect, union, difference, and extract features by location."
+tools:
+  - clip_layer
+  - intersect_layer
+  - difference_layer
+  - union_layer
+  - symmetrical_difference
+  - extract_by_location
+tags: [clip, intersect, within, overlay]
+profile: vector_raster_basic

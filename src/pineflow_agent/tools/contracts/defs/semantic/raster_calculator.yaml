@@ -1,0 +1,27 @@
+name: raster_calculator
+description: "Calculate a raster using a QGIS raster expression."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: qgis:rastercalculator
+required_slots: [raster_refs, expression]
+defaults:
+  output: TEMPORARY_OUTPUT
+
+display:
+  title: "Raster calculator"
+  command: "raster_calculator {expression}"
+
+tags: [栅格计算, raster calculator, map algebra]
+groups: [group:raster]
+
+layer_requirements:
+  raster_refs: raster
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_slots]
+  preflight: [raster_inputs]
+  runtime_repair: []

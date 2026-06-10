@@ -1,0 +1,39 @@
+name: select_by_expression
+description: "Extract features using a QGIS expression filter."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:extractbyexpression
+required_slots: [input_ref, expression]
+defaults:
+  output: TEMPORARY_OUTPUT
+
+missing_slot_messages:
+  expression: semantic.expression.missing_expression
+
+display:
+  title: "Select by expression"
+  command: "select from {input_ref} where {expression}"
+
+tags: [表达式, filter, attribute]
+groups: [group:vector_analysis]
+
+layer_requirements:
+  input_ref: vector
+
+geometry_requirements: {}
+field_requirements: {}
+
+processing_parameters:
+  INPUT: input_ref
+  EXPRESSION: expression
+  OUTPUT:
+    value: __output__
+
+output_policy:
+  suffix: expr_selected
+
+rules:
+  semantic: [required_slots]
+  preflight: []
+  runtime_repair: []

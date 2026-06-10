@@ -1,0 +1,19 @@
+name: discover_algorithms
+description: "Search QGIS processing algorithms."
+category: qgis_generic
+terminal: false
+
+display:
+  title: "Search QGIS algorithms"
+  command: "discover_algorithms {query}"
+
+required_slots: []
+properties:
+  query:
+    type: string
+    description: "Search text for the algorithm."
+  limit:
+    type: integer
+    description: "Maximum number of algorithms to return."
+
+groups: [group:qgis_generic]

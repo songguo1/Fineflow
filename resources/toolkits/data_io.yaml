@@ -1,0 +1,13 @@
+name: data_io
+title: "Data IO"
+description: "Load vector/raster/table data, create points from CSV, and export results."
+tools:
+  - load_vector
+  - load_raster
+  - load_csv
+  - summarize_layer
+  - csv_to_points
+  - export_result
+tags: [load, csv, export, data, summary]
+profile: vector_raster_basic
+default_active: true

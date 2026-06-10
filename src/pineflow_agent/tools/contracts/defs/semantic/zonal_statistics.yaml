@@ -1,0 +1,33 @@
+name: zonal_statistics
+description: "Calculate raster statistics for polygon zones."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:zonalstatisticsfb
+required_slots: [input_ref, raster_ref]
+defaults:
+  raster_band: 1
+  column_prefix: "_"
+  statistics: [0, 1, 2]
+  output: TEMPORARY_OUTPUT
+
+display:
+  title: "Zonal statistics"
+  command: "zonal_statistics {input_ref} from {raster_ref}"
+
+tags: [分区统计, zonal]
+groups: [group:raster]
+
+layer_requirements:
+  input_ref: vector
+  raster_ref: raster
+
+geometry_requirements:
+  input_ref: polygon
+
+field_requirements: {}
+
+rules:
+  semantic: [required_slots]
+  preflight: [raster_inputs]
+  runtime_repair: []

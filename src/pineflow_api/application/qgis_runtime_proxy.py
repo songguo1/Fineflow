@@ -1,0 +1,191 @@
+"""QGIS runtime proxy that executes only concrete GIS operations in a QGIS Python subprocess."""
+
+from __future__ import annotations
+
+import json
+import os
+import subprocess
+from pathlib import Path
+from threading import Lock
+from typing import Any
+
+from pineflow_runtime.errors import QGISRuntimeError, ToolExecutionError, ToolValidationError
+
+from pineflow_api.application.qgis_launcher import launcher_command
+
+
+class SubprocessQGISRuntime:
+    """QGISRuntime-compatible proxy that delegates PyQGIS work to a worker process."""
+
+    def __init__(self, *, launcher: str, prefix_path: str | None = None) -> None:
+        self.launcher = str(launcher or "").strip()
+        self.prefix_path = str(prefix_path or "").strip()
+        self._process: subprocess.Popen[str] | None = None
+        self._lock = Lock()
+        if not self.launcher or not Path(self.launcher).exists():
+            raise QGISRuntimeError(
+                "QGIS launcher is required for subprocess runtime execution.",
+                data={"launcher": self.launcher or "<empty>"},
+            )
+
+    def ensure_ready(self) -> None:
+        self._call("environment_report")
+
+    def shutdown(self) -> None:
+        with self._lock:
+            self._shutdown_locked()
+
+    def environment_report(self) -> dict[str, Any]:
+        return self._call("environment_report")
+
+    def list_algorithms(self, query: str = "", *, limit: int = 50) -> list[dict[str, Any]]:
+        return list(self._call("list_algorithms", query=query, limit=limit) or [])
+
+    def algorithm_help(self, algorithm_id: str) -> dict[str, Any]:
+        return dict(self._call("algorithm_help", algorithm_id=algorithm_id) or {})
+
+    def inspect_vector_path(self, input_path: str) -> dict[str, Any]:
+        return dict(self._call("inspect_vector_path", input_path=input_path) or {})
+
+    def inspect_raster_path(self, input_path: str) -> dict[str, Any]:
+        return dict(self._call("inspect_raster_path", input_path=input_path) or {})
+
+    def csv_to_points(
+        self,
+        input_path: str,
+        *,
+        x_field: str,
+        y_field: str,
+        crs_authid: str = "EPSG:4326",
+        encoding: str = "",
+        output_path: str,
+    ) -> dict[str, Any]:
+        return dict(
+            self._call(
+                "csv_to_points",
+                input_path=input_path,
+                x_field=x_field,
+                y_field=y_field,
+                crs_authid=crs_authid,
+                encoding=encoding,
+                output_path=output_path,
+            )
+            or {}
+        )
+
+    def run_algorithm(self, algorithm_id: str, params: dict[str, Any]) -> dict[str, Any]:
+        return dict(self._call("run_algorithm", algorithm_id=algorithm_id, params=dict(params or {})) or {})
+
+    def write_vector(self, input_path: str, output_path: str, *, driver_name: str | None = None) -> dict[str, Any]:
+        return dict(
+            self._call(
+                "write_vector",
+                input_path=input_path,
+                output_path=output_path,
+                driver_name=driver_name,
+            )
+            or {}
+        )
+
+    def _call(self, operation: str, **arguments: Any) -> Any:
+        payload = {
+            "mode": "runtime_rpc",
+            "operation": str(operation or "").strip(),
+            "arguments": arguments,
+            "qgis": {"prefix_path": self.prefix_path},
+        }
+        with self._lock:
+            return self._call_locked(payload)
+
+    def _call_locked(self, payload: dict[str, Any]) -> Any:
+        process = self._ensure_process_locked()
+        assert process.stdin is not None
+        assert process.stdout is not None
+        try:
+            process.stdin.write(json.dumps(payload, ensure_ascii=False) + "\n")
+            process.stdin.flush()
+            output = str(process.stdout.readline() or "").strip()
+        except (BrokenPipeError, OSError) as exc:
+            self._shutdown_locked()
+            raise QGISRuntimeError(
+                "QGIS runtime worker stopped before returning a response.",
+                data={"operation": payload.get("operation") or ""},
+            ) from exc
+        if not output:
+            return_code = process.poll()
+            self._shutdown_locked()
+            stderr = ""
+            raise QGISRuntimeError(
+                stderr or f"QGIS runtime worker returned empty output with code {return_code}.",
+                data={"operation": payload.get("operation") or "", "return_code": return_code},
+            )
+        try:
+            value = json.loads(output)
+        except json.JSONDecodeError as exc:
+            raise QGISRuntimeError(
+                f"QGIS runtime worker returned invalid JSON: {output[:300]}",
+                data={"operation": payload.get("operation") or ""},
+            ) from exc
+        if not isinstance(value, dict):
+            raise QGISRuntimeError(
+                "QGIS runtime worker did not return a JSON object.",
+                data={"operation": payload.get("operation") or ""},
+            )
+        if value.get("ok") is True:
+            return value.get("result")
+        message = str(value.get("error") or "QGIS runtime worker failed.")
+        data = dict(value.get("data") or {})
+        error_type = str(value.get("error_type") or "")
+        if error_type == "ToolValidationError":
+            raise ToolValidationError(message, data=data)
+        if error_type == "ToolExecutionError":
+            raise ToolExecutionError(message, data=data)
+        raise QGISRuntimeError(message, data=data)
+
+    def _ensure_process_locked(self) -> subprocess.Popen[str]:
+        if self._process is not None and self._process.poll() is None:
+            return self._process
+        self._process = subprocess.Popen(
+            launcher_command(self.launcher, "-m", "pineflow_api.entrypoints.worker", "--runtime-rpc-loop"),
+            cwd=str(Path.cwd()),
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            env=self._worker_env(),
+        )
+        return self._process
+
+    def _shutdown_locked(self) -> None:
+        process = self._process
+        self._process = None
+        if process is None:
+            return
+        try:
+            if process.poll() is None and process.stdin is not None:
+                process.stdin.write(
+                    json.dumps({"mode": "runtime_rpc", "operation": "shutdown", "arguments": {}}, ensure_ascii=False)
+                    + "\n"
+                )
+                process.stdin.flush()
+                if process.stdout is not None:
+                    process.stdout.readline()
+                process.wait(timeout=5)
+                return
+        except Exception:
+            pass
+        if process.poll() is None:
+            process.terminate()
+            try:
+                process.wait(timeout=3)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait(timeout=3)
+
+    def _worker_env(self) -> dict[str, str]:
+        env = os.environ.copy()
+        if self.prefix_path:
+            env["QGIS_PREFIX_PATH"] = self.prefix_path
+        return env

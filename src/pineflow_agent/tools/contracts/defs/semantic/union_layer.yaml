@@ -1,0 +1,41 @@
+name: union_layer
+description: "Create a union overlay between two vector layers."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: native:union
+required_slots: [input_ref, overlay_ref]
+defaults:
+  output: TEMPORARY_OUTPUT
+
+processing_parameters:
+  INPUT: input_ref
+  OVERLAY: overlay_ref
+  OVERLAY_FIELDS_PREFIX:
+    slot: overlay_fields_prefix
+    default: ""
+    type: string
+  OUTPUT:
+    value: __output__
+
+output_policy:
+  suffix: union
+
+display:
+  title: "Union layers"
+  command: "union {input_ref} with {overlay_ref}"
+
+tags: [联合, union]
+groups: [group:vector_overlay]
+
+layer_requirements:
+  input_ref: vector
+  overlay_ref: vector
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_layers]
+  preflight: [layer_exists, geometry_risk]
+  runtime_repair: [invalid_geometry]

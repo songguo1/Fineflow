@@ -1,0 +1,45 @@
+name: aspect
+description: "Calculate aspect (slope direction) from a raster DEM."
+category: qgis_semantic
+terminal: false
+
+algorithm_id: gdal:aspect
+required_slots: [input_ref]
+defaults:
+  band: 1
+  compute_edges: false
+  output: TEMPORARY_OUTPUT
+
+processing_parameters:
+  INPUT: input_ref
+  BAND:
+    slot: band
+    default_slot: band
+    type: int
+  COMPUTE_EDGES:
+    slot: compute_edges
+    default_slot: compute_edges
+    type: bool
+  OUTPUT:
+    value: __output__
+
+output_policy:
+  suffix: aspect
+
+display:
+  title: "Calculate aspect"
+  command: "aspect {input_ref}"
+
+tags: [坡向, aspect, 地形, terrain, dem, 朝向]
+groups: [group:raster]
+
+layer_requirements:
+  input_ref: raster
+
+geometry_requirements: {}
+field_requirements: {}
+
+rules:
+  semantic: [required_slots]
+  preflight: [raster_inputs]
+  runtime_repair: []

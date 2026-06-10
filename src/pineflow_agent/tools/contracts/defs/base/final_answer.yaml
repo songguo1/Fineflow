@@ -1,0 +1,16 @@
+name: final_answer
+description: "Finish the workflow and summarize the completed GIS task. If recent outputs exist, include the final output file name and full output path in the message."
+category: output
+terminal: true
+
+display:
+  title: "Finish workflow"
+  command: "final_answer"
+
+required_slots: [message]
+properties:
+  message:
+    type: string
+    description: "Short final user-facing summary, including final output file name and full path when outputs were created."
+
+groups: [group:output]
