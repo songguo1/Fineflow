@@ -1,256 +1,122 @@
 # PineFlow
 
-[简体中文](README.zh-CN.md)
+[中文](README.zh-CN.md)
 
 <p align="center">
   <img src="apps/desktop/src/assets/pineflow-wordmark.png" alt="PineFlow" width="360">
 </p>
 
-PineFlow is a GIS automation agent platform for QGIS workflows. It converts
-natural-language GIS requests into validated QGIS Processing operations through
-an LLM-driven agentic loop and native tool calling.
+PineFlow is a tool-calling GIS agent for QGIS workflows. It turns natural-language GIS requests into validated QGIS Processing / PyQGIS operations through a ReAct-style observe-act loop.
 
-The goal of PineFlow is not to generate one-off scripts. Instead, it executes
-GIS workflows step by step inside clear tool boundaries, with rule validation,
-runtime state tracking, and recoverable observations after each operation.
+PineFlow is currently a graduation-thesis prototype. It focuses on structured GIS processing workflows and does not aim to replace the full QGIS desktop experience, such as cartographic styling, interactive editing, map layout design, or manual visual inspection.
+
+## Links
+
+- Demo video: [Bilibili](https://www.bilibili.com/video/BV1N6Jg6xEYT)
+- Chinese article: to be added after publication
 
 ## Features
 
-- Natural-language GIS workflow automation
-- Agentic loop execution: observe, choose one tool call, validate, execute,
-  verify, and continue
-- Native LLM tool calling
-- QGIS Processing integration through a PyQGIS runtime bridge
-- ToolKit-based tool disclosure to reduce model noise
-- Skill-based GIS domain guidance
-- Semantic and preflight validation through a rules gateway
-- Session state, run events, output artifacts, and workspace state tracking
+- Natural-language GIS workflow execution
+- ReAct-style observe-act loop with native LLM tool calling
+- QGIS Processing / PyQGIS execution through an isolated runtime worker
+- ToolKit-based capability disclosure to reduce context noise
+- Skill-based GIS task guidance loaded on demand
+- Rules gateway for semantic validation and GIS preflight checks
+- Session state, run events, artifacts, outputs, and workspace snapshots
 - FastAPI backend service
-- Tauri v2 + React desktop client
+- Tauri v2 + React desktop application
 
-## Project Structure
+## Repository Layout
 
 ```text
 src/
   pineflow_agent/
-    core/              Core models, workspace state, messages, artifacts
-    llm/               LLM clients, model adapters, context building
-    orchestration/     ReAct loop, resume flow, run events, result building
-    policies/          Output, CRS, and autonomy policies
-    risks/             Risk diagnosis, taxonomy, and converters
-    rules/             Semantic validation, preflight checks, resume rules
-    tools/             Tool definitions, registry, ToolKits, QGIS wrappers
+    core/             Agent state, workspace models, messages, artifacts
+    llm/              LLM clients, model adapters, prompt/context assembly
+    orchestration/    ReAct loop, run execution, resume flow, result projection
+    policies/         Output, CRS, and autonomy policies
+    risks/            Risk diagnostics and risk conversion logic
+    rules/            Semantic validation, preflight checks, resume rules
+    tools/            Tool definitions, registry, ToolKits, QGIS tool wrappers
 
   pineflow_api/
-    application/       Application services for runs, sessions, and state
-    contracts/         API contracts, run lifecycle, events, snapshots
-    entrypoints/       FastAPI app entrypoint and PyQGIS worker entrypoint
-    persistence/       SQLite sessions, event streams, snapshots
-    routing/           Slash commands, intent routing, session routing
+    application/      Run, session, state-query, and QGIS runtime services
+    contracts/        API contracts, run lifecycle, events, snapshots
+    entrypoints/      FastAPI entrypoint and PyQGIS worker entrypoint
+    persistence/      SQLite session store, event stream, run snapshots
+    routing/          Slash commands, intent routing, session routing
 
   pineflow_runtime/
-    runtime.py         Concrete PyQGIS execution logic
-    errors.py          Runtime error definitions
+    runtime.py        Concrete PyQGIS execution logic
+    errors.py         Runtime error definitions
 
 apps/
   desktop/
-    src/               React frontend source
-    src-tauri/         Tauri v2 native desktop project
-    package.json       Desktop dependencies and scripts
-    vite.config.js     Vite configuration
+    src/              React frontend source
+    src-tauri/        Tauri v2 native desktop project
+    package.json      Desktop dependencies and scripts
+    vite.config.js    Vite configuration
 
 resources/
-  skills/              GIS guidance documents loaded by the agent
-  toolkits/            ToolKit YAML definitions
+  skills/             GIS domain guidance loaded by the agent
+  toolkits/           ToolKit capability definitions
 
-.pineflow/             Local runtime state and default session outputs, ignored by Git
+.pineflow/            Local runtime state and default session outputs, ignored by Git
 ```
 
 ## Architecture
 
-PineFlow has four main layers:
-
 ```text
 Desktop UI
-   ↓
+  |
 FastAPI Backend
-   ↓
+  |
 ReAct GIS Agent
-   ↓
+  |
 QGIS / PyQGIS Runtime
 ```
 
-### Desktop UI
+The desktop app does not execute GIS operations directly. It creates runs through the backend API, polls run events, and renders session state, workflow steps, outputs, and analysis reports.
 
-The desktop client lives in `apps/desktop/` and is built with Tauri v2 and
-React. It provides session navigation, data source management, chat input, run
-status, workflow step visualization, and result display.
+The backend manages sessions, runs, event streams, state snapshots, slash commands, intent routing, and execution orchestration.
 
-The desktop client does not execute GIS operations directly. It creates runs
-through the backend API, polls run events, and renders session and workspace
-state.
-
-### Backend API
-
-The backend lives in `src/pineflow_api/` and is built with FastAPI. It manages
-sessions, runs, event streams, state snapshots, slash commands, intent routing,
-and execution orchestration.
-
-### Agent Core
-
-The agent lives in `src/pineflow_agent/`. It translates user requests into a
-sequence of validated GIS tool calls.
-
-The execution flow is:
+The agent converts a user request into a sequence of validated GIS tool calls:
 
 ```text
 Read workspace state
-  ↓
+  |
 Build ReAct prompt
-  ↓
+  |
 Ask the LLM for one native tool call
-  ↓
-Validate the action through the rules gateway
-  ↓
-Execute the tool
-  ↓
-Record the observation
-  ↓
-Continue, ask for confirmation, or return a final answer
-```
-
-Tool selection goes through the LLM provider's native tool-calling interface.
-
-### PyQGIS Runtime
-
-The runtime lives in `src/pineflow_runtime/`. It performs concrete QGIS
-operations such as buffering, clipping, fixing geometries, raster calculation,
-and exporting results.
-
-The API and agent can stay in a normal Python environment. Concrete QGIS work
-is delegated to the PyQGIS runtime boundary when needed.
-
-## Agent Mechanism
-
-PineFlow is built around a GIS-focused agentic loop. Instead of generating a
-complete script in one shot or relying on a fixed planner, the agent repeatedly
-observes the current GIS workspace, chooses one tool call, validates and
-executes it, verifies the result, and uses the observation to decide the next
-step.
-
-### Agentic Loop
-
-PineFlow uses a ReAct-first agentic loop:
-
-```text
-Observe workspace state
-  ↓
-Reason about the next GIS step
-  ↓
-Select one native tool call
-  ↓
+  |
 Validate through the rules gateway
-  ↓
-Execute through the tool registry / PyQGIS runtime
-  ↓
-Record the tool result as an observation
-  ↓
-Verify state and outputs, then continue or finish
+  |
+Execute the tool
+  |
+Record observation
+  |
+Continue, ask for confirmation, or return final answer
 ```
 
-This keeps each step inspectable, recoverable, and easier to validate.
+The runtime layer performs the actual QGIS work, such as buffering, clipping, geometry repair, raster calculation, reprojection, and exporting results.
 
-### Native Tool Calling
+## ToolKits
 
-PineFlow uses native LLM tool calling. The model returns structured tool calls
-that can be validated and executed by the agent runtime.
+PineFlow groups tools by ToolKit. Only the currently relevant ToolKits are disclosed to the model during a run.
 
-Provider-specific differences are isolated in the LLM adapter layer.
+| ToolKit | Main capabilities |
+| --- | --- |
+| `data_io` | Load vector/raster/CSV data, convert CSV to points, summarize layers, export results |
+| `vector_transform` | Reproject, fix geometries, centroid, point on surface, multipart to singlepart, simplify geometry |
+| `vector_analysis` | Buffer, dissolve, merge layers, attribute filter, spatial join, nearest join, count points in polygon, field calculation |
+| `vector_overlay` | Clip, intersect, difference, union, symmetrical difference, extract by location |
+| `raster` | Raster reprojection, mask/extent clipping, raster calculator, zonal statistics, raster sampling, vector rasterization, polygonization |
+| `qgis_generic` | Discover QGIS algorithms, inspect algorithm help, and use a controlled generic algorithm entry when needed |
 
-### Rules Gateway
+## Skills
 
-Every GIS action must pass through the rules gateway before execution.
-
-The gateway performs:
-
-- Semantic validation: action shape, required slots, enum values
-- Preflight validation: layer existence, field existence, geometry type, CRS
-  compatibility, and other GIS state risks
-
-### ToolKits
-
-ToolKits control which GIS tools are visible to the model. They reduce context
-noise and make tool selection more predictable.
-
-Definitions live in:
-
-```text
-resources/toolkits/
-```
-
-Typical ToolKits include:
-
-- `data_io`
-- `vector_transform`
-- `vector_analysis`
-- `vector_overlay`
-- `raster`
-- `qgis_generic`
-
-### Skills
-
-Skills are Markdown guidance files with YAML frontmatter. They are not
-executable workflows. They provide domain-specific GIS instructions to the
-agent.
-
-Definitions live in:
-
-```text
-resources/skills/
-```
-
-Examples include metric buffering, CSV-to-points workflows, boundary filtering,
-spatial joins, raster basics, and CRS selection.
-
-### Session State
-
-PineFlow maintains local session state, run events, snapshots, output artifacts,
-and workflow state. Tool failures are preserved as observations, allowing later
-turns to adapt based on concrete error feedback.
-
-### ReAct Context Management
-
-PineFlow is ReAct-first, not planner-first. Long-running state is kept in the
-session store, run snapshots, transcript projection, artifact index, and
-workflow state. The agent receives the current GIS state, relevant artifacts,
-visible tools, recent observations, and the current workflow step when one is
-available.
-
-In this model:
-
-- The ReAct loop remains responsible for choosing concrete tools.
-- Validation and resume behavior are handled by RulesGateway, preflight checks,
-  pending tasks, and repair flows.
-- Workflow state acts as a context anchor, but it does not replace ReAct tool
-  selection.
-- Historical observations should be summarized into compact state instead of
-  being repeatedly sent in full.
-
-This makes context compression more stable: prompts can keep compact state,
-current workflow step, recent observations, and artifacts while avoiding a
-growing verbatim history. Adding a larger planner alone would not solve token
-growth; PineFlow keeps the execution path agentic.
-
-## Use Cases
-
-PineFlow is suitable for exploring natural-language GIS automation, such as:
-
-- Loading vector, raster, and CSV data
-- Running buffer, clip, intersect, dissolve, and other spatial operations
-- Converting CSV tables into point layers
-- Checking CRS and reprojecting layers
-- Running basic raster processing workflows
-- Exporting results as GeoJSON, GeoPackage, or Shapefile
+Skills are Markdown guidance files under `resources/skills/`. They are not executors and do not replace rule validation. They provide GIS task knowledge to the model when useful, such as CRS handling for meter-based buffers, CSV longitude/latitude detection, boundary filtering risks, and spatial join considerations.
 
 ## Requirements
 
@@ -258,93 +124,62 @@ PineFlow is suitable for exploring natural-language GIS automation, such as:
 - Node.js 18+
 - Rust toolchain
 - QGIS LTR
-- An OpenAI-compatible LLM provider, such as DeepSeek, OpenAI-compatible APIs,
-  Qwen, or GLM
+- An OpenAI-compatible LLM provider, such as DeepSeek, OpenAI-compatible APIs, Qwen, or GLM
 
-Real GIS processing requires a local QGIS installation. Many code-level checks
-and UI tasks can be developed without launching QGIS.
+Real GIS execution requires a local QGIS installation. Basic code checks and some frontend development do not require QGIS to be running.
 
-## Environment
+## Configuration
 
-Create a local `.env` from the template:
+PineFlow reads configuration from process environment variables and from the desktop settings panel. The project does not require a local environment file.
+
+At minimum, configure an LLM provider before starting the backend:
 
 ```powershell
-Copy-Item .env.example .env
+$env:PINEFLOW_LLM_PROVIDER="deepseek"
+$env:PINEFLOW_LLM_BASE_URL="https://api.deepseek.com"
+$env:PINEFLOW_LLM_MODEL="deepseek-v4-pro"
+$env:DEEPSEEK_API_KEY="your_api_key"
 ```
 
-Common settings:
+For real QGIS processing, configure the local QGIS runtime as well:
 
-```env
-PINEFLOW_LLM_PROVIDER=deepseek
-PINEFLOW_LLM_BASE_URL=https://api.deepseek.com
-PINEFLOW_LLM_MODEL=deepseek-v4-pro
-PINEFLOW_LLM_API_KEY=
-
-QGIS_LAUNCHER=D:\software\QGIS\bin\python-qgis-ltr.bat
-QGIS_PREFIX_PATH=D:\software\QGIS\apps\qgis-ltr
+```powershell
+$env:QGIS_LAUNCHER="D:\software\QGIS\bin\python-qgis-ltr.bat"
+$env:QGIS_PREFIX_PATH="D:\software\QGIS\apps\qgis-ltr"
 ```
 
-`.env` is local-only and must not be committed.
+These values can also be filled in through the desktop settings UI.
 
 ## QGIS Configuration
 
-PineFlow separates the backend/agent Python environment from the PyQGIS runtime.
-The FastAPI service and the agent can run in a normal Python environment, while
-concrete GIS processing is delegated to a local QGIS installation when needed.
+PineFlow separates the backend/agent Python environment from the PyQGIS runtime. The FastAPI service and agent can run in a normal Python environment. Concrete GIS operations are delegated to the local QGIS installation when needed.
 
-There are two QGIS-related paths:
+Two QGIS paths are important:
 
-- `QGIS Launcher`: the executable or batch file that starts the Python
-  environment bundled with QGIS. PineFlow uses it to run the runtime worker in a
-  QGIS Python subprocess, so PyQGIS imports and Processing providers are
-  available for real GIS operations.
-- `QGIS Prefix Path`: the QGIS application prefix directory. QGIS uses this
-  path to locate its libraries, plugins, resources, and Processing algorithms.
+- `QGIS Launcher`: the QGIS Python launcher, usually a `.bat` file or executable. PineFlow uses it to start a runtime worker inside QGIS's Python environment, so PyQGIS imports and Processing providers are available.
+- `QGIS Prefix Path`: the QGIS application prefix directory. QGIS uses this path to locate libraries, plugins, resources, and Processing algorithms.
 
-In the desktop settings these fields are named `QGIS Launcher` and
-`QGIS Prefix Path`.
-
-On Windows with QGIS LTR, they commonly look like:
-
-```env
-QGIS_LAUNCHER=D:\software\QGIS\bin\python-qgis-ltr.bat
-QGIS_PREFIX_PATH=D:\software\QGIS\apps\qgis-ltr
-```
-
-Typical launcher examples:
+Common Windows QGIS LTR examples:
 
 ```text
+QGIS Launcher:
 D:\software\QGIS\bin\python-qgis-ltr.bat
 C:\Program Files\QGIS 3.34.*/bin/python-qgis-ltr.bat
 C:\Program Files\QGIS 3.40.*/bin/python-qgis.bat
-```
 
-Typical prefix path examples:
-
-```text
+QGIS Prefix Path:
 D:\software\QGIS\apps\qgis-ltr
 C:\Program Files\QGIS 3.34.*/apps/qgis-ltr
 C:\Program Files\QGIS 3.40.*/apps/qgis
 ```
 
-The launcher and prefix path are not input data directories. They describe how
-PineFlow finds and starts the local QGIS runtime.
+Launcher and prefix path are not input data directories. They describe how PineFlow finds and starts the local QGIS runtime.
 
-In practice:
+If QGIS is not configured correctly, the API and desktop UI may still start, but real GIS operations such as buffer, clip, reprojection, raster processing, and export may fail.
 
-- Use `QGIS Launcher` for subprocess execution with QGIS's own Python
-  environment. This is the recommended path on Windows.
-- Use `QGIS Prefix Path` to tell QGIS where its application resources live.
-  This value is also passed to the subprocess runtime.
-- If the launcher is missing, PineFlow falls back to in-process runtime
-  initialization using `QGIS_PREFIX_PATH`, which only works when the current
-  Python environment can import and initialize PyQGIS.
+## Quick Start
 
-Without a valid QGIS installation, the API and desktop interface may still
-start, but real GIS execution such as buffer, clip, reprojection, raster
-processing, and export operations will fail.
-
-## Install Python Package
+Install the Python package from the repository root:
 
 ```powershell
 py -m venv .venv
@@ -352,25 +187,25 @@ py -m venv .venv
 py -m pip install -e .
 ```
 
-## Run Backend API
+Start the backend API in terminal 1:
 
 ```powershell
 py -m pineflow_api --host 127.0.0.1 --port 8765
 ```
 
-The backend listens at:
+The backend listens on:
 
 ```text
 http://127.0.0.1:8765
 ```
 
-The main API routes are under:
+Main API routes are under:
 
 ```text
 /qgis/*
 ```
 
-## Run Desktop App
+Start the desktop app in terminal 2:
 
 ```powershell
 cd apps/desktop
@@ -378,19 +213,19 @@ npm install
 npm run dev
 ```
 
-Browser-only development:
+Browser-only frontend development:
 
 ```powershell
 npm run dev:web
 ```
 
-Production web build:
+Build the web bundle:
 
 ```powershell
 npm run build:web
 ```
 
-Native desktop build:
+Build the native desktop app:
 
 ```powershell
 npm run build
@@ -398,70 +233,20 @@ npm run build
 
 ## Local Runtime State And Outputs
 
-PineFlow stores local runtime state under `.pineflow/`. This directory is not
-source code and is not committed to Git.
+PineFlow stores local runtime state under `.pineflow/`. This directory is not source code and should not be committed to Git.
 
-The default session output path is:
+Default session outputs are stored under:
 
 ```text
 .pineflow/sessions/{session_id}/outputs/
 ```
 
-The runtime directory is organized as:
-
-```text
-.pineflow/
-  pineflow_state.db          Local SQLite session store
-  sessions/
-    {session_id}/
-      outputs/               Default exported results
-      temp/                  Intermediate QGIS outputs
-      artifacts/             Runtime artifacts, when present
-```
-
-`.pineflow/` may not exist in a fresh clone. It is created during local use.
-
-## Repository Policy
-
-This repository tracks:
-
-```text
-README.md
-README.zh-CN.md
-LICENSE
-.gitignore
-.env.example
-pyproject.toml
-package.json
-src/
-apps/
-resources/
-```
-
-This repository does not track:
-
-```text
-.env
-.pineflow/
-output/
-docs/
-tests/
-node_modules/
-dist/
-target/
-__pycache__/
-.pytest_cache/
-.pytest_tmp/
-AGENTS.md
-CLAUDE.md
-```
+The repository also ignores local GIS data, generated outputs, caches, build artifacts, assistant metadata, and test-only files.
 
 ## Development Status
 
-PineFlow is currently a prototype and graduation-thesis project. The core
-architecture is in place, but tool definitions, API details, UI behavior, and
-QGIS runtime compatibility may continue to evolve.
+PineFlow is still experimental. Its current focus is a reliable tool-calling harness around QGIS Processing / PyQGIS workflows, including validation, workspace state, event traces, and reproducible outputs.
 
 ## License
 
-This project is licensed under the MIT License.
+MIT License. See [LICENSE](LICENSE).
