@@ -13,7 +13,7 @@ PineFlow is currently a graduation-thesis prototype. It focuses on structured GI
 ## Links
 
 - Demo video: [Bilibili](https://www.bilibili.com/video/BV1N6Jg6xEYT)
-- Chinese article: to be added after publication
+- Chinese article: [WeChat Official Account](https://mp.weixin.qq.com/s/NMACoA4dCgp8wsIiV35ovQ)
 
 ## Features
 

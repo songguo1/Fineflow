@@ -13,7 +13,7 @@ PineFlow 目前是本科毕业设计原型项目，适合结构化 GIS 处理流
 ## 相关链接
 
 - 演示视频：[Bilibili](https://www.bilibili.com/video/BV1N6Jg6xEYT)
-- 公众号文章：发布后补充
+- 公众号文章：[微信公众号](https://mp.weixin.qq.com/s/NMACoA4dCgp8wsIiV35ovQ)
 
 ## 项目特性
 
